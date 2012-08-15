@@ -1,28 +1,24 @@
-class Bot
+require "./connection"
+class Botty
 
-  require 'mechanize'
+  class Bot
 
-  def connect
+    attr_accessor :connection
 
-    agent = Mechanize.new
+    def initialize connection
+      @connection = connection
+    end
 
-    res = agent.post "http://www.emp-game.com/Account/LogOn", :Password => "qwerty", :Email => "taras.bober@gmail.com"
-    reg = /window\.localStorage\.setItem\(\'session\-id\', \'([a-zA-Z0-9]*)\'\);/
-    session_id = reg.match(res.body)[1]
+    def start
+      @connection.connect
 
-    res = agent.post "http://ua1.emp-game.com/service/", :method => "render-start-info", "session-id" => session_id
-    puts res.body
-
-    #site = RestClient::Resource.new "http://www.emp-game.com"
-    #res = site['Account/LogOn'].post :Password => "qwerty", :Email => "taras.bober@gmail.com" do |response, request, result|
-    #  site['service/'].post :method => "render-start-info" do |response, request, result|
-    #    puts response
-    #  end
-    #end
-
+      puts @connection.status
+    end
   end
 
 end
 
-bot = Bot.new
-bot.connect
+
+connection = Botty::Connection.new "taras.bober@gmailcom", "qwerty"
+bot = Botty::Bot.new connection
+bot.start
